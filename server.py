@@ -113,9 +113,13 @@ def submit_score(movie_id):
     rating = Ratings_data(user_id = user_id, movie_id =movie_id, score = score)
     db.session.add(rating)
     db.session.commit()
+    movie = Movie.query.filter(Movie.movie_id == movie_id).one()
+    user_id = session.get('user_id')
+    if user_id:
+        user= User.query.filter(User.user_id == user_id).one()
+        scores = Ratings_data.query.filter(Ratings_data.movie_id == movie_id, Ratings_data.user_id == user_id).first()
 
-    return render_template("movie_details.html")
-
+    return render_template("movie_details.html", movie = movie, Ratings_data = Ratings_data, scores = scores)
 
 @app.route('/movies/<movie_id>')
 def show_movie_info(movie_id):
